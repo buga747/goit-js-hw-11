@@ -4,6 +4,7 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { fetchPixabayAPI } from './js/pixabay-api.js';
 import { renderGallery } from './js/render-gallery';
+import { scrollByTwoCards } from './js/scroll';
 const form = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
@@ -23,11 +24,8 @@ function onSearch(evt) {
   gallery.innerHTML = '';
   loadMoreBtn.hidden = true;
   page = 1;
-  //   const {
-  //     searchQuery: { value: query },
-  //   } = evt.currentTarget.elements;
   query = evt.currentTarget.searchQuery.value.trim();
-  console.log(query);
+  // console.log(query);
 
   if (query === '') {
     insertInfo();
@@ -55,13 +53,13 @@ function onSearch(evt) {
 
 function onLoadMore() {
   page += 1;
-  simpleLightBox.destroy();
+  // simpleLightBox.destroy();
 
   fetchPixabayAPI(query, page, perPage)
     .then(({ data }) => {
       renderGallery(data.hits);
       onSimplelightboxAdd();
-
+      scrollByTwoCards();
       const totalPages = Math.ceil(data.totalHits / perPage);
 
       if (page === totalPages) {

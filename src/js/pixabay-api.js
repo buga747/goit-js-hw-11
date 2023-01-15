@@ -7,7 +7,7 @@ async function fetchPixabayAPI(query, page = 1, perPage = 40) {
   const response = await axios.get(
     `?key=${KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=${perPage}`
   );
-  console.log(response);
+  // console.log(response);
   return response;
 }
 
