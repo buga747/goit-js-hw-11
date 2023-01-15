@@ -2,7 +2,7 @@
     background: #f4f4f4;
     background: rgba(244, 244, 244, .79);
     border: 1px solid #d3d3d3;
-
+    display: flex;
     padding: 2px 5px;
 
     max-width: 339px;
@@ -20,6 +20,7 @@
 }
 
 .searchform input {
+
     background: #fefefe;
     border: none;
     font: 12px/12px 'HelveticaNeue', Helvetica, Arial, sans-serif;
@@ -52,7 +53,7 @@
 }
 
 .searchform button,
-button {
+.load-more {
     background: rgb(52, 173, 236);
     background: -moz-linear-gradient(top, rgba(52, 173, 236, 1) 0%, rgba(38, 145, 220, 1) 100%);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(52, 173, 236, 1)), color-stop(100%, rgba(38, 145, 220, 1)));

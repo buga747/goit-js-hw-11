@@ -5,6 +5,7 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 import { fetchPixabayAPI } from './js/pixabay-api.js';
 import { renderGallery } from './js/render-gallery';
 import { scrollByTwoCards } from './js/scroll';
+import { onScroll, onToTopBtn } from './js/toTopBtn';
 const form = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
@@ -13,6 +14,9 @@ let simpleLightBox;
 let query = '';
 let page = 1;
 let perPage = 40;
+
+onScroll();
+onToTopBtn();
 
 form.addEventListener('submit', onSearch);
 
@@ -53,7 +57,7 @@ function onSearch(evt) {
 
 function onLoadMore() {
   page += 1;
-  // simpleLightBox.destroy();
+  simpleLightBox.destroy();
 
   fetchPixabayAPI(query, page, perPage)
     .then(({ data }) => {
