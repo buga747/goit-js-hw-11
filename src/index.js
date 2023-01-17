@@ -4,29 +4,29 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { fetchPixabayAPI } from './js/pixabay-api.js';
 import { renderGallery } from './js/render-gallery';
-import { scrollByTwoCards } from './js/scroll';
+// import { scrollByTwoCards } from './js/scroll';
 import { onScroll, onToTopBtn } from './js/toTopBtn';
 const form = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
-const loadMoreBtn = document.querySelector('.load-more');
-let simpleLightBox;
+const guard = document.querySelector('.js-guard');
+// const loadMoreBtn = document.querySelector('.load-more');
 
 let query = '';
 let page = 1;
 let perPage = 40;
 
-onScroll();
+// onScroll();
 onToTopBtn();
 
 form.addEventListener('submit', onSearch);
 
-loadMoreBtn.addEventListener('click', onLoadMore);
+// loadMoreBtn.addEventListener('click', onLoadMore);
 
 function onSearch(evt) {
   evt.preventDefault();
 
   gallery.innerHTML = '';
-  loadMoreBtn.hidden = true;
+  // loadMoreBtn.hidden = true;
   page = 1;
   query = evt.currentTarget.searchQuery.value.trim();
   // console.log(query);
@@ -40,38 +40,41 @@ function onSearch(evt) {
     .then(({ data }) => {
       if (data.hits.length === 0) {
         onNoResult();
-      } else {
-        renderGallery(data.hits);
-
-        onSimplelightboxAdd();
-        onImagesFound(data);
-
-        if (data.totalHits > perPage) {
-          loadMoreBtn.hidden = false;
-        }
       }
+
+      renderGallery(data.hits);
+
+      onImagesFound(data);
+      galleryImg.refresh();
+      observer.observe(guard);
     })
     .catch(error => console.log(error))
     .finally(form.reset());
 }
 
-function onLoadMore() {
-  page += 1;
-  simpleLightBox.destroy();
+const options = {
+  root: null,
+  rootMargin: '300px',
+  threshold: 1.0,
+};
 
-  fetchPixabayAPI(query, page, perPage)
-    .then(({ data }) => {
-      renderGallery(data.hits);
-      onSimplelightboxAdd();
-      scrollByTwoCards();
-      const totalPages = Math.ceil(data.totalHits / perPage);
+const observer = new IntersectionObserver(onLoadMore, options);
 
-      if (page === totalPages) {
-        loadMoreBtn.hidden = true;
-        onCollectionEnd();
-      }
-    })
-    .catch(error => console.log(error));
+function onLoadMore(entries, observer) {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      page += 1;
+      fetchPixabayAPI(query, page, perPage).then(({ data }) => {
+        renderGallery(data.hits);
+        galleryImg.refresh();
+
+        if (Number(page * perPage) >= data.totalHits) {
+          observer.unobserve(guard);
+          onCollectionEnd();
+        }
+      });
+    }
+  });
 }
 
 function insertInfo() {
@@ -92,13 +95,12 @@ function onCollectionEnd() {
   Notify.warning("We're sorry, but you've reached the end of search results.");
 }
 
-function onSimplelightboxAdd() {
-  simpleLightBox = new SimpleLightbox('.gallery a', {
-    captions: true,
-    captionSelector: 'img',
-    captionPosition: 'bottom',
-    captionType: 'attr',
-    captionsData: 'alt',
-    captionDelay: 250,
-  }).refresh();
-}
+let galleryImg = new SimpleLightbox('.gallery a', {
+  captions: true,
+  captionSelector: 'img',
+  captionPosition: 'bottom',
+  captionType: 'attr',
+  captionsData: 'alt',
+  captionDelay: 250,
+});
+galleryImg.refresh();

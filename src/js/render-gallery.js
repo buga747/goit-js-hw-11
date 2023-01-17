@@ -17,7 +17,7 @@ function renderGallery(images) {
         return `<a class="gallery__link" href="${largeImageURL}">
       <div class="photo-card">
       
-        <img class="photo" src="${webformatURL}" alt="${tags}" loading="lazy" />
+        <img src="${webformatURL}" alt="${tags}" loading="lazy" class = "photo" />
         
         <div class="info">
           <p class="info-item">
@@ -34,8 +34,7 @@ function renderGallery(images) {
           </p>
         </div>
       </div>
-      </a>
-      `;
+      </a>`;
       }
     )
     .join('');
